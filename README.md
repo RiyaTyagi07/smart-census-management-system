@@ -12,6 +12,12 @@ A Python-based web application designed to manage census records with blockchain
 - Blockchain transaction history
 - Flask-powered web interface
 
+## Screenshots
+
+### Dashboard
+![Smart Census Dashboard](screenshots/smart%20census%20dashboard.png.png)
+
+
 ## Tech Stack
 
 - **Language:** Python
