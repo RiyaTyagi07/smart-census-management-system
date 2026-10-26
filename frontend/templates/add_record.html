@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Census Record | Smart Census</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* ==========================================
+           DOCUMENT UPLOAD
+        =========================================== */
+
+        .document-upload-section {
+            grid-column: 1 / -1;
+
+            margin-top: 10px;
+            padding: 24px;
+
+            background: #f8faff;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 16px;
+        }
+
+        .document-upload-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+
+            margin-bottom: 18px;
+        }
+
+        .document-upload-icon {
+            width: 44px;
+            height: 44px;
+
+            border-radius: 12px;
+
+            background: #e8f0ff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+        }
+
+        .document-upload-header h3 {
+            margin: 0;
+
+            color: #172033;
+
+            font-size: 17px;
+        }
+
+        .document-upload-header p {
+            margin: 4px 0 0;
+
+            color: #687386;
+
+            font-size: 13px;
+        }
+
+        .upload-box {
+            position: relative;
+
+            border: 2px dashed #cbd5e1;
+
+            border-radius: 14px;
+
+            background: white;
+
+            padding: 28px 20px;
+
+            text-align: center;
+
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #2563eb;
+
+            background: #f8fbff;
+        }
+
+        .upload-box.drag-active {
+            border-color: #2563eb;
+
+            background: #eff6ff;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+
+            margin-bottom: 10px;
+        }
+
+        .upload-title {
+            margin: 0 0 6px;
+
+            color: #172033;
+
+            font-size: 15px;
+
+            font-weight: 700;
+        }
+
+        .upload-description {
+            margin: 0 0 14px;
+
+            color: #687386;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        .file-label {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px 18px;
+
+            border-radius: 10px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .file-label:hover {
+            background: #1d4ed8;
+        }
+
+        #document {
+            display: none;
+        }
+
+        .selected-file {
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 12px 14px;
+
+            border-radius: 10px;
+
+            background: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            color: #1e40af;
+
+            font-size: 13px;
+
+            text-align: left;
+        }
+
+        .selected-file.show {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+        }
+
+        .selected-file-name {
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-weight: 600;
+        }
+
+        .remove-file {
+            border: none;
+
+            background: transparent;
+
+            color: #dc2626;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            margin-top: 12px;
+
+            color: #7b8494;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+    </style>
+
+</head>
+
+
+<body class="record-page">
+
+
+    <!-- ==========================================
+         TOP HEADER
+    =========================================== -->
+
+    <header class="record-header">
+
+        <div class="record-header-left">
+
+            <div class="record-logo">
+                SC
+            </div>
+
+            <div>
+
+                <h2>Smart Census</h2>
+
+                <p>Census Management System</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="record-header-right">
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="back-dashboard"
+            >
+                ← Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="record-logout"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="record-main">
+
+
+        <div class="record-heading">
+
+            <div>
+
+                <span class="record-badge">
+                    CENSUS DATA
+                </span>
+
+                <h1>Add Census Record</h1>
+
+                <p>
+                    Enter the citizen's information carefully
+                    and submit the form to create a census record.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             FLASH MESSAGES
+        =========================================== -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="record-messages">
+
+                    {% for category, message in messages %}
+
+                        <div class="record-message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+
+        <!-- ==========================================
+             FORM CARD
+        =========================================== -->
+
+        <section class="record-card">
+
+
+            <div class="record-card-title">
+
+                <div class="section-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <h2>Citizen Information</h2>
+
+                    <p>
+                        Please provide accurate information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_record') }}"
+                class="record-form"
+                enctype="multipart/form-data"
+            >
+
+
+                <!-- FULL NAME -->
+
+                <div class="record-field">
+
+                    <label for="full_name">
+                        Full Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Enter full name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- AGE -->
+
+                <div class="record-field">
+
+                    <label for="age">
+                        Age
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="age"
+                        name="age"
+                        min="0"
+                        max="120"
+                        placeholder="Enter age"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- GENDER -->
+
+                <div class="record-field">
+
+                    <label for="gender">
+                        Gender
+                        <span>*</span>
+                    </label>
+
+                    <select
+                        id="gender"
+                        name="gender"
+                        required
+                    >
+
+                        <option value="">
+                            Select gender
+                        </option>
+
+                        <option value="Male">
+                            Male
+                        </option>
+
+                        <option value="Female">
+                            Female
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                        <option value="Prefer not to say">
+                            Prefer not to say
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DATE OF BIRTH -->
+
+                <div class="record-field">
+
+                    <label for="date_of_birth">
+                        Date of Birth
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- MOBILE -->
+
+                <div class="record-field">
+
+                    <label for="mobile_number">
+                        Mobile Number
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="mobile_number"
+                        name="mobile_number"
+                        placeholder="Enter mobile number"
+                        minlength="10"
+                        maxlength="15"
+                        inputmode="numeric"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CITY -->
+
+                <div class="record-field">
+
+                    <label for="city">
+                        City
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        placeholder="Enter city"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- OCCUPATION -->
+
+                <div class="record-field">
+
+                    <label for="occupation">
+                        Occupation
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="occupation"
+                        name="occupation"
+                        placeholder="e.g. Student, Teacher, Engineer"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ADDRESS -->
+
+                <div class="record-field record-full-width">
+
+                    <label for="address">
+                        Full Address
+                        <span>*</span>
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        placeholder="Enter complete residential address"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- ==========================================
+                     DOCUMENT UPLOAD
+                =========================================== -->
+
+                <div class="document-upload-section">
+
+                    <div class="document-upload-header">
+
+                        <div class="document-upload-icon">
+                            📎
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Supporting Document
+                            </h3>
+
+                            <p>
+                                Upload a document related to this census record.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="upload-box"
+                        id="uploadBox"
+                    >
+
+                        <div class="upload-icon">
+                            📄
+                        </div>
+
+                        <p class="upload-title">
+                            Upload Supporting Document
+                        </p>
+
+                        <p class="upload-description">
+                            Select a PDF, Word document, image,
+                            spreadsheet or text file.
+                        </p>
+
+                        <label
+                            for="document"
+                            class="file-label"
+                        >
+                            Choose File
+                        </label>
+
+                        <input
+                            type="file"
+                            id="document"
+                            name="document"
+                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.xls,.xlsx,.csv"
+                        >
+
+
+                        <div
+                            class="selected-file"
+                            id="selectedFile"
+                        >
+
+                            <span
+                                class="selected-file-name"
+                                id="selectedFileName"
+                            ></span>
+
+                            <button
+                                type="button"
+                                class="remove-file"
+                                id="removeFile"
+                            >
+                                Remove
+                            </button>
+
+                        </div>
+
+                        <div class="file-info">
+                            Supported formats:
+                            PDF, DOC, DOCX, TXT, JPG, JPEG,
+                            PNG, XLS, XLSX, CSV
+                            <br>
+                            Maximum file size: 5 MB
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="record-actions">
+
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="record-cancel"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="record-submit"
+                    >
+                        Save Census Record
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ==========================================
+         DOCUMENT UPLOAD SCRIPT
+    =========================================== -->
+
+    <script>
+
+        const documentInput =
+            document.getElementById("document");
+
+        const selectedFile =
+            document.getElementById("selectedFile");
+
+        const selectedFileName =
+            document.getElementById("selectedFileName");
+
+        const removeFile =
+            document.getElementById("removeFile");
+
+        const uploadBox =
+            document.getElementById("uploadBox");
+
+
+        documentInput.addEventListener(
+            "change",
+            function () {
+
+                if (!this.files || !this.files.length) {
+
+                    selectedFile.classList.remove("show");
+
+                    selectedFileName.textContent = "";
+
+                    return;
+                }
+
+
+                const file = this.files[0];
+
+                const maxSize =
+                    5 * 1024 * 1024;
+
+
+                if (file.size > maxSize) {
+
+                    alert(
+                        "File size must not exceed 5 MB."
+                    );
+
+                    this.value = "";
+
+                    selectedFile.classList.remove("show");
+
+                    selectedFileName.textContent = "";
+
+                    return;
+                }
+
+
+                selectedFileName.textContent =
+                    file.name;
+
+                selectedFile.classList.add("show");
+
+            }
+        );
+
+
+        removeFile.addEventListener(
+            "click",
+            function () {
+
+                documentInput.value = "";
+
+                selectedFile.classList.remove("show");
+
+                selectedFileName.textContent = "";
+
+            }
+        );
+
+
+        uploadBox.addEventListener(
+            "dragover",
+            function (event) {
+
+                event.preventDefault();
+
+                uploadBox.classList.add(
+                    "drag-active"
+                );
+
+            }
+        );
+
+
+        uploadBox.addEventListener(
+            "dragleave",
+            function () {
+
+                uploadBox.classList.remove(
+                    "drag-active"
+                );
+
+            }
+        );
+
+
+        uploadBox.addEventListener(
+            "drop",
+            function (event) {
+
+                event.preventDefault();
+
+                uploadBox.classList.remove(
+                    "drag-active"
+                );
+
+
+                const files =
+                    event.dataTransfer.files;
+
+
+                if (!files || !files.length) {
+                    return;
+                }
+
+
+                const file = files[0];
+
+                const maxSize =
+                    5 * 1024 * 1024;
+
+
+                if (file.size > maxSize) {
+
+                    alert(
+                        "File size must not exceed 5 MB."
+                    );
+
+                    return;
+                }
+
+
+                const dataTransfer =
+                    new DataTransfer();
+
+                dataTransfer.items.add(file);
+
+                documentInput.files =
+                    dataTransfer.files;
+
+
+                selectedFileName.textContent =
+                    file.name;
+
+                selectedFile.classList.add(
+                    "show"
+                );
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+<aside class="app-sidebar">
+
+    <!-- BRAND -->
+    <div class="app-brand">
+
+        <div class="app-brand-logo">
+            SC
+        </div>
+
+        <div class="app-brand-text">
+            <h2>Smart Census</h2>
+            <span>Management System</span>
+        </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="app-sidebar-nav">
+
+        <div class="app-nav-title">
+            MAIN MENU
+        </div>
+
+
+        <!-- DASHBOARD -->
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="app-nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+        >
+            <span class="app-nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+
+        <!-- CENSUS RECORDS -->
+        <a
+            href="{{ url_for('records') }}"
+            class="app-nav-link {% if request.endpoint in ['records', 'edit_record'] %}active{% endif %}"
+        >
+            <span class="app-nav-icon">▤</span>
+            <span>Census Records</span>
+        </a>
+
+
+        <!-- ADD RECORD -->
+        <a
+            href="{{ url_for('add_record') }}"
+            class="app-nav-link {% if request.endpoint == 'add_record' %}active{% endif %}"
+        >
+            <span class="app-nav-icon">＋</span>
+            <span>Add Record</span>
+        </a>
+
+
+        <!-- ACCOUNT -->
+        <div class="app-nav-title app-account-title">
+            ACCOUNT
+        </div>
+
+
+        <!-- PROFILE -->
+        <a
+            href="{{ url_for('profile') }}"
+            class="app-nav-link {% if request.endpoint == 'profile' %}active{% endif %}"
+        >
+            <span class="app-nav-icon">◎</span>
+            <span>Profile</span>
+        </a>
+
+
+        <!-- SETTINGS -->
+        <a
+            href="{{ url_for('settings') }}"
+            class="app-nav-link {% if request.endpoint == 'settings' %}active{% endif %}"
+        >
+            <span class="app-nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+
+    <!-- BOTTOM -->
+    <div class="app-sidebar-bottom">
+
+
+        <!-- NEED HELP -->
+        <a
+            href="{{ url_for('help_page') }}"
+            class="app-help-card {% if request.endpoint == 'help_page' %}help-active{% endif %}"
+        >
+
+            <div class="app-help-icon">
+                ?
+            </div>
+
+            <div>
+                <strong>Need Help?</strong>
+                <span>Contact administrator</span>
+            </div>
+
+        </a>
+
+
+        <!-- LOGOUT -->
+        <a
+            href="{{ url_for('logout') }}"
+            class="app-logout"
+        >
+
+            <span class="app-nav-icon">
+                ↪
+            </span>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+    </div>
+
+</aside>

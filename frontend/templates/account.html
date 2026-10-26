@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% if page == "profile" %}
+            Profile
+        {% elif page == "settings" %}
+            Settings
+        {% else %}
+            Help
+        {% endif %}
+        | Smart Census
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body class="dashboard-page">
+
+
+<div class="dashboard-layout">
+
+
+    <!-- SIDEBAR -->
+
+    {% include "sidebar.html" %}
+
+
+    <!-- MAIN CONTENT -->
+
+    <main
+        class="dashboard-main"
+        style="
+            min-height:100vh;
+            padding:40px;
+            background:#f7f9fc;
+            box-sizing:border-box;
+        "
+    >
+
+
+        <style>
+
+            .account-page {
+                max-width:1100px;
+                margin:0 auto;
+            }
+
+            .account-header {
+                margin-bottom:28px;
+            }
+
+            .account-header .eyebrow {
+                font-size:13px;
+                font-weight:700;
+                letter-spacing:1.5px;
+                color:#8d99aa;
+                text-transform:uppercase;
+                margin-bottom:8px;
+            }
+
+            .account-header h1 {
+                margin:0;
+                color:#172554;
+                font-size:32px;
+            }
+
+            .account-header p {
+                margin:8px 0 0;
+                color:#718096;
+                font-size:15px;
+            }
+
+            .account-grid {
+                display:grid;
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+                gap:22px;
+            }
+
+            .account-card {
+                background:#ffffff;
+                border:1px solid #e8edf5;
+                border-radius:18px;
+                padding:28px;
+                box-shadow:
+                    0 8px 24px rgba(31,52,85,.06);
+            }
+
+            .account-card.full {
+                grid-column:1 / -1;
+            }
+
+            .account-icon {
+                width:52px;
+                height:52px;
+                border-radius:14px;
+                background:#edf4ff;
+                color:#2563eb;
+
+                display:flex;
+                align-items:center;
+                justify-content:center;
+
+                font-size:24px;
+
+                margin-bottom:18px;
+            }
+
+            .account-card h2 {
+                margin:0 0 8px;
+                color:#172554;
+                font-size:20px;
+            }
+
+            .account-card p {
+                color:#718096;
+                line-height:1.7;
+                margin:0;
+            }
+
+            .account-row {
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+
+                padding:15px 0;
+
+                border-bottom:
+                    1px solid #edf1f6;
+            }
+
+            .account-row:last-child {
+                border-bottom:0;
+            }
+
+            .account-label {
+                font-size:13px;
+                color:#8a96a8;
+                font-weight:600;
+            }
+
+            .account-value {
+                font-size:15px;
+                color:#243b64;
+                font-weight:600;
+                text-align:right;
+                word-break:break-word;
+            }
+
+            .account-btn {
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+
+                text-decoration:none;
+
+                margin-top:20px;
+
+                padding:11px 18px;
+
+                border-radius:10px;
+
+                background:#2563eb;
+                color:#ffffff;
+
+                font-weight:700;
+            }
+
+            .account-list {
+                margin:16px 0 0;
+                padding-left:20px;
+
+                color:#596b85;
+
+                line-height:2;
+            }
+
+            .support-box {
+                background:#f4f8ff;
+
+                border:
+                    1px solid #dce9ff;
+
+                border-radius:14px;
+
+                padding:18px;
+
+                margin-top:18px;
+            }
+
+            .support-box strong {
+                color:#1e40af;
+            }
+
+            @media(max-width:900px) {
+
+                .account-grid {
+                    grid-template-columns:1fr;
+                }
+
+            }
+
+        </style>
+
+
+        <div class="account-page">
+
+
+            <!-- ========================= -->
+            <!-- PROFILE -->
+            <!-- ========================= -->
+
+            {% if page == "profile" %}
+
+
+            <div class="account-header">
+
+                <div class="eyebrow">
+                    ACCOUNT
+                </div>
+
+                <h1>
+                    My Profile
+                </h1>
+
+                <p>
+                    View the details of your Smart Census account.
+                </p>
+
+            </div>
+
+
+            <div class="account-grid">
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        ◎
+                    </div>
+
+                    <h2>
+                        Account Information
+                    </h2>
+
+                    <p>
+                        Your registered account details are shown below.
+                    </p>
+
+
+                    <div style="margin-top:18px;">
+
+
+                        <div class="account-row">
+
+                            <span class="account-label">
+                                Name
+                            </span>
+
+                            <span class="account-value">
+                                {{ user["name"] }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-row">
+
+                            <span class="account-label">
+                                Email
+                            </span>
+
+                            <span class="account-value">
+                                {{ user["email"] }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-row">
+
+                            <span class="account-label">
+                                User ID
+                            </span>
+
+                            <span class="account-value">
+                                #{{ user["id"] }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-row">
+
+                            <span class="account-label">
+                                Account Created
+                            </span>
+
+                            <span class="account-value">
+                                {{ user["created_at"] }}
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Account Status
+                    </h2>
+
+                    <p>
+                        Your current session is active and authenticated.
+                    </p>
+
+
+                    <div class="support-box">
+
+                        <strong>
+                            Secure Session
+                        </strong>
+
+                        <p style="margin-top:6px;">
+
+                            You are logged in as an
+                            authorized Smart Census
+                            system user.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- SETTINGS -->
+            <!-- ========================= -->
+
+            {% elif page == "settings" %}
+
+
+            <div class="account-header">
+
+                <div class="eyebrow">
+                    ACCOUNT
+                </div>
+
+                <h1>
+                    Settings
+                </h1>
+
+                <p>
+                    Manage your account and security settings.
+                </p>
+
+            </div>
+
+
+            <div class="account-grid">
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        ⚙
+                    </div>
+
+                    <h2>
+                        Account Settings
+                    </h2>
+
+                    <p>
+
+                        <strong>
+                            {{ user_name }}
+                        </strong>
+
+                        <br>
+
+                        {{ user_email }}
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for('forgot_password') }}"
+                        class="account-btn"
+                    >
+                        Change Password
+                    </a>
+
+                </div>
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        🔐
+                    </div>
+
+                    <h2>
+                        Security
+                    </h2>
+
+                    <p>
+
+                        Smart Census uses
+                        authenticated sessions
+                        and hashed passwords.
+
+                    </p>
+
+
+                    <ul class="account-list">
+
+                        <li>
+                            Password is stored as a secure hash.
+                        </li>
+
+                        <li>
+                            Only logged-in users can access records.
+                        </li>
+
+                        <li>
+                            Logout when you finish using the system.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- HELP -->
+            <!-- ========================= -->
+
+            {% else %}
+
+
+            <div class="account-header">
+
+                <div class="eyebrow">
+                    SUPPORT
+                </div>
+
+                <h1>
+                    Need Help?
+                </h1>
+
+                <p>
+                    Quick guidance for using
+                    the Smart Census Management System.
+                </p>
+
+            </div>
+
+
+            <div class="account-grid">
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        ?
+                    </div>
+
+                    <h2>
+                        How Can We Help?
+                    </h2>
+
+                    <p>
+
+                        Use the main menu to
+                        manage census records
+                        and review blockchain
+                        verification information.
+
+                    </p>
+
+
+                    <ul class="account-list">
+
+                        <li>
+                            <strong>
+                                Dashboard:
+                            </strong>
+
+                            View system overview
+                            and record statistics.
+
+                        </li>
+
+
+                        <li>
+                            <strong>
+                                Census Records:
+                            </strong>
+
+                            View, edit, delete
+                            and verify records.
+
+                        </li>
+
+
+                        <li>
+                            <strong>
+                                Add Record:
+                            </strong>
+
+                            Add a new census
+                            record and documents.
+
+                        </li>
+
+
+                        <li>
+                            <strong>
+                                Profile:
+                            </strong>
+
+                            View your account
+                            information.
+
+                        </li>
+
+
+                        <li>
+                            <strong>
+                                Settings:
+                            </strong>
+
+                            Manage account
+                            security options.
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="account-card">
+
+                    <div class="account-icon">
+                        ✉
+                    </div>
+
+                    <h2>
+                        Contact Administrator
+                    </h2>
+
+                    <p>
+
+                        If you face an issue
+                        with the system, contact
+                        your project administrator
+                        or authorized system
+                        administrator.
+
+                    </p>
+
+
+                    <div class="support-box">
+
+                        <strong>
+                            Logged-in User
+                        </strong>
+
+                        <p style="margin-top:6px;">
+
+                            {{ user_name }}
+
+                            {% if user_email %}
+
+                            · {{ user_email }}
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

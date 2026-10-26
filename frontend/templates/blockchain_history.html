@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Blockchain History | Smart Census System</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .history-layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ==================================================
+           SIDEBAR
+        ================================================== */
+
+        .history-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 280px;
+            height: 100vh;
+
+            background: #111827;
+            color: white;
+
+            padding: 28px 20px;
+
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            background: #2563eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+        }
+
+        .brand-text h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .brand-text span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+        .nav-title {
+            margin: 0 0 12px 12px;
+
+            color: #6b7280;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 13px 14px;
+
+            margin-bottom: 7px;
+
+            border-radius: 10px;
+
+            color: #d1d5db;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .logout-link {
+            position: absolute;
+
+            left: 20px;
+            right: 20px;
+            bottom: 25px;
+        }
+
+        /* ==================================================
+           MAIN
+        ================================================== */
+
+        .history-main {
+            width: calc(100% - 280px);
+
+            margin-left: 280px;
+
+            min-height: 100vh;
+
+            padding: 32px 38px;
+        }
+
+        /* ==================================================
+           TOPBAR
+        ================================================== */
+
+        .history-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            color: #4b5563;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #2563eb;
+        }
+
+        .page-title h1 {
+            margin: 10px 0 6px;
+
+            font-size: 28px;
+            color: #111827;
+        }
+
+        .page-title p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        /* ==================================================
+           BLOCKCHAIN STATUS
+        ================================================== */
+
+        .status-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 22px 25px;
+
+            margin-bottom: 24px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 15px;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .blockchain-symbol {
+            width: 50px;
+            height: 50px;
+
+            border-radius: 13px;
+
+            background: #eff6ff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+        .status-left h3 {
+            margin: 0 0 5px;
+
+            font-size: 16px;
+        }
+
+        .status-left p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 8px 13px;
+
+            border-radius: 20px;
+
+            background: #ecfdf5;
+            color: #047857;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #10b981;
+        }
+
+        /* ==================================================
+           RECORD SUMMARY
+        ================================================== */
+
+        .record-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+        }
+
+        .record-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .record-card-header h2 {
+            margin: 0;
+
+            font-size: 18px;
+        }
+
+        .record-id {
+            padding: 7px 12px;
+
+            border-radius: 8px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .record-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+        .record-field {
+            padding: 14px;
+
+            background: #f9fafb;
+
+            border-radius: 10px;
+        }
+
+        .record-field label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #6b7280;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            text-transform: uppercase;
+        }
+
+        .record-field span {
+            color: #111827;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            word-break: break-word;
+        }
+
+        /* ==================================================
+           AUDIT HISTORY
+        ================================================== */
+
+        .audit-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+        }
+
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 22px;
+        }
+
+        .audit-header h2 {
+            margin: 0;
+
+            font-size: 18px;
+        }
+
+        .audit-count {
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .audit-entry {
+            position: relative;
+
+            display: grid;
+
+            grid-template-columns: 70px 1fr;
+
+            gap: 18px;
+
+            padding-bottom: 25px;
+
+            margin-bottom: 25px;
+
+            border-bottom: 1px solid #edf0f3;
+        }
+
+        .audit-entry:last-child {
+            border-bottom: none;
+
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .audit-number {
+            width: 45px;
+            height: 45px;
+
+            border-radius: 12px;
+
+            background: #eff6ff;
+            color: #2563eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .audit-content {
+            min-width: 0;
+        }
+
+        .audit-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 12px;
+        }
+
+        .action-badge {
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.4px;
+        }
+
+        .action-create {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .action-update {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .action-delete {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .audit-time {
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        .hash-box {
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 9px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 12px;
+        }
+
+        .hash-label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #6b7280;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+        }
+
+        .hash-value {
+            display: block;
+
+            color: #374151;
+
+            font-family: Consolas, monospace;
+
+            font-size: 12px;
+
+            word-break: break-all;
+        }
+
+        .audit-meta {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+        .meta-item {
+            padding: 11px;
+
+            background: #fafafa;
+
+            border-radius: 8px;
+        }
+
+        .meta-item label {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #9ca3af;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+        }
+
+        .meta-item span {
+            color: #374151;
+
+            font-family: Consolas, monospace;
+
+            font-size: 11px;
+
+            word-break: break-all;
+        }
+
+        /* ==================================================
+           EMPTY STATE
+        ================================================== */
+
+        .empty-history {
+            padding: 55px 20px;
+
+            text-align: center;
+
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 42px;
+
+            margin-bottom: 12px;
+        }
+
+        .empty-history h3 {
+            margin: 0 0 7px;
+
+            color: #374151;
+
+            font-size: 17px;
+        }
+
+        .empty-history p {
+            margin: 0;
+
+            font-size: 13px;
+        }
+
+        /* ==================================================
+           SECURITY NOTE
+        ================================================== */
+
+        .security-note {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+
+            margin-top: 25px;
+
+            padding: 18px 20px;
+
+            background: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 12px;
+        }
+
+        .security-note-icon {
+            font-size: 19px;
+        }
+
+        .security-note h4 {
+            margin: 0 0 4px;
+
+            color: #1e40af;
+
+            font-size: 13px;
+        }
+
+        .security-note p {
+            margin: 0;
+
+            color: #475569;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 1000px) {
+
+            .record-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .audit-meta {
+                grid-template-columns:
+                    1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+
+            .history-sidebar {
+                position: relative;
+
+                width: 100%;
+                height: auto;
+
+                min-height: auto;
+            }
+
+            .history-layout {
+                display: block;
+            }
+
+            .logout-link {
+                position: static;
+
+                margin-top: 25px;
+            }
+
+            .history-main {
+                width: 100%;
+
+                margin-left: 0;
+
+                padding: 25px 18px;
+            }
+
+            .record-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .status-card {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+            .audit-entry {
+                grid-template-columns:
+                    50px 1fr;
+
+                gap: 12px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="history-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="history-sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ⛓
+            </div>
+
+            <div class="brand-text">
+
+                <h2>Smart Census</h2>
+
+                <span>
+                    Secure Census Management
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <p class="nav-title">
+            Main Menu
+        </p>
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="sidebar-link"
+        >
+            🏠
+            <span>Dashboard</span>
+        </a>
+
+
+        <a
+            href="{{ url_for('add_record') }}"
+            class="sidebar-link"
+        >
+            ➕
+            <span>Add Census Record</span>
+        </a>
+
+
+        <a
+            href="{{ url_for('records') }}"
+            class="sidebar-link"
+        >
+            👥
+            <span>Census Records</span>
+        </a>
+
+
+        <a
+            href="#"
+            class="sidebar-link active"
+        >
+            ⛓
+            <span>Blockchain History</span>
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="sidebar-link logout-link"
+        >
+            🚪
+            <span>Logout</span>
+        </a>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="history-main">
+
+        <div class="history-topbar">
+
+            <div>
+
+                <a
+                    href="{{ url_for('records') }}"
+                    class="back-link"
+                >
+                    ← Back to Census Records
+                </a>
+
+                <div class="page-title">
+
+                    <h1>
+                        Blockchain Audit History
+                    </h1>
+
+                    <p>
+                        Complete blockchain activity and integrity trail
+                        for this census record.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             BLOCKCHAIN STATUS
+        ================================================== -->
+
+        <div class="status-card">
+
+            <div class="status-left">
+
+                <div class="blockchain-symbol">
+                    ⛓
+                </div>
+
+                <div>
+
+                    <h3>
+                        Blockchain Network
+                    </h3>
+
+                    <p>
+                        Local Ethereum test blockchain
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if blockchain_info.connected %}
+
+                <div class="status-badge">
+
+                    <span class="status-dot"></span>
+
+                    Blockchain Connected
+
+                </div>
+
+            {% else %}
+
+                <div class="status-badge"
+                     style="background:#fef2f2;color:#dc2626;">
+
+                    <span
+                        class="status-dot"
+                        style="background:#ef4444;"
+                    ></span>
+
+                    Blockchain Offline
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             RECORD SUMMARY
+        ================================================== -->
+
+        <div class="record-card">
+
+            <div class="record-card-header">
+
+                <h2>
+                    Census Record
+                </h2>
+
+                <span class="record-id">
+                    Record #{{ record["id"] }}
+                </span>
+
+            </div>
+
+
+            <div class="record-grid">
+
+                <div class="record-field">
+
+                    <label>
+                        Citizen Name
+                    </label>
+
+                    <span>
+                        {{ record["full_name"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Age
+                    </label>
+
+                    <span>
+                        {{ record["age"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Gender
+                    </label>
+
+                    <span>
+                        {{ record["gender"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        City
+                    </label>
+
+                    <span>
+                        {{ record["city"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Occupation
+                    </label>
+
+                    <span>
+                        {{ record["occupation"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Date of Birth
+                    </label>
+
+                    <span>
+                        {{ record["date_of_birth"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Mobile Number
+                    </label>
+
+                    <span>
+                        {{ record["mobile_number"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="record-field">
+
+                    <label>
+                        Address
+                    </label>
+
+                    <span>
+                        {{ record["address"] }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             AUDIT HISTORY
+        ================================================== -->
+
+        <div class="audit-card">
+
+            <div class="audit-header">
+
+                <h2>
+                    Blockchain Activity
+                </h2>
+
+                <span class="audit-count">
+
+                    {{ history|length }}
+                    audit event{% if history|length != 1 %}s{% endif %}
+
+                </span>
+
+            </div>
+
+
+            {% if history and history[0].get("error") %}
+
+                <div class="empty-history">
+
+                    <div class="empty-icon">
+                        ⚠️
+                    </div>
+
+                    <h3>
+                        Unable to load history
+                    </h3>
+
+                    <p>
+                        {{ history[0]["error"] }}
+                    </p>
+
+                </div>
+
+
+            {% elif history %}
+
+                {% for entry in history|reverse %}
+
+                    <div class="audit-entry">
+
+                        <div class="audit-number">
+                            {{ loop.index }}
+                        </div>
+
+
+                        <div class="audit-content">
+
+                            <div class="audit-top">
+
+                                {% if entry["action"] == "CREATE" %}
+
+                                    <span class="action-badge action-create">
+                                        CREATE
+                                    </span>
+
+                                {% elif entry["action"] == "UPDATE" %}
+
+                                    <span class="action-badge action-update">
+                                        UPDATE
+                                    </span>
+
+                                {% elif entry["action"] == "DELETE" %}
+
+                                    <span class="action-badge action-delete">
+                                        DELETE
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="action-badge">
+                                        {{ entry["action"] }}
+                                    </span>
+
+                                {% endif %}
+
+
+                                <span class="audit-time">
+
+                                    Blockchain block
+                                    {{ entry["block_number"] }}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="hash-box">
+
+                                <span class="hash-label">
+                                    Data Hash
+                                </span>
+
+                                <span class="hash-value">
+                                    {{ entry["data_hash"] }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="audit-meta">
+
+                                <div class="meta-item">
+
+                                    <label>
+                                        Transaction Hash
+                                    </label>
+
+                                    <span>
+                                        {{ entry["transaction_hash"] }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="meta-item">
+
+                                    <label>
+                                        Block Number
+                                    </label>
+
+                                    <span>
+                                        {{ entry["block_number"] }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="meta-item">
+
+                                    <label>
+                                        Submitted By
+                                    </label>
+
+                                    <span>
+                                        {{ entry["submitted_by"] }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <div class="empty-history">
+
+                    <div class="empty-icon">
+                        ⛓
+                    </div>
+
+                    <h3>
+                        No blockchain history found
+                    </h3>
+
+                    <p>
+                        No blockchain audit events have been recorded
+                        for this census record yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             SECURITY NOTE
+        ================================================== -->
+
+        <div class="security-note">
+
+            <div class="security-note-icon">
+                🔐
+            </div>
+
+            <div>
+
+                <h4>
+                    How Blockchain Protects This Record
+                </h4>
+
+                <p>
+                    The citizen's personal information remains stored
+                    in the local SQLite database. A SHA-256 hash of
+                    the record is stored on the blockchain. During
+                    verification, the current record is hashed again
+                    and compared with the blockchain hash. If the
+                    values match, the record has maintained its
+                    integrity.
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard | Smart Census</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body class="dashboard-page">
+
+
+<div class="dashboard-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="dashboard-sidebar">
+
+
+        <!-- BRAND -->
+
+        <div class="dashboard-brand">
+
+            <div class="dashboard-logo">
+                SC
+            </div>
+
+            <div class="dashboard-brand-text">
+
+                <h2>Smart Census</h2>
+
+                <span>
+                    Management System
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="dashboard-nav">
+
+
+            <div class="nav-section-title">
+                MAIN MENU
+            </div>
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="dashboard-nav-link active"
+            >
+
+                <span class="nav-icon">⌂</span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- CENSUS RECORDS -->
+
+            <a
+                href="{{ url_for('records') }}"
+                class="dashboard-nav-link"
+            >
+
+                <span class="nav-icon">▤</span>
+
+                <span>
+                    Census Records
+                </span>
+
+            </a>
+
+
+            <!-- ADD RECORD -->
+
+            <a
+                href="{{ url_for('add_record') }}"
+                class="dashboard-nav-link"
+            >
+
+                <span class="nav-icon">＋</span>
+
+                <span>
+                    Add Record
+                </span>
+
+            </a>
+
+
+
+            <div class="nav-section-title account-title">
+                ACCOUNT
+            </div>
+
+
+            <!-- PROFILE -->
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="dashboard-nav-link"
+            >
+
+                <span class="nav-icon">◎</span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+
+            <!-- SETTINGS -->
+
+            <a
+                href="{{ url_for('settings') }}"
+                class="dashboard-nav-link"
+            >
+
+                <span class="nav-icon">⚙</span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="dashboard-sidebar-bottom">
+
+
+            <!-- NEED HELP -->
+
+            <a
+                href="{{ url_for('help_page') }}"
+                class="sidebar-help"
+            >
+
+                <div class="help-icon">
+                    ?
+                </div>
+
+                <div class="help-text">
+
+                    <strong>
+                        Need Help?
+                    </strong>
+
+                    <span>
+                        Contact administrator
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- LOGOUT -->
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="dashboard-logout"
+            >
+
+                <span class="logout-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="dashboard-main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="dashboard-topbar">
+
+
+            <div class="topbar-title">
+
+                <span>
+                    SMART CENSUS SYSTEM
+                </span>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+            </div>
+
+
+
+            <!-- USER INFO -->
+
+            <div class="dashboard-user-info-only">
+
+                <strong>
+                    {{ user_name }}
+                </strong>
+
+                <span>
+                    {{ user_email }}
+                </span>
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="dashboard-messages">
+
+                    {% for category, message in messages %}
+
+                        <div class="dashboard-message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+
+        <!-- =====================================================
+             WELCOME CARD
+        ====================================================== -->
+
+        <section class="dashboard-welcome-card">
+
+
+            <div class="welcome-content">
+
+                <span class="welcome-small">
+                    WELCOME BACK
+                </span>
+
+                <h2>
+                    Hello, {{ user_name }} 👋
+                </h2>
+
+                <p>
+                    Manage census information and keep
+                    citizen records organized from one place.
+                </p>
+
+            </div>
+
+
+            <div class="welcome-icon">
+                🏛️
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             CENSUS OVERVIEW
+        ====================================================== -->
+
+        <section class="dashboard-section">
+
+
+            <div class="dashboard-section-heading">
+
+                <div>
+
+                    <h2>
+                        Census Overview
+                    </h2>
+
+                    <p>
+                        Current statistics from your census records.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="dashboard-stats">
+
+
+                <!-- TOTAL -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon total-icon">
+                        👥
+                    </div>
+
+                    <div class="stat-content">
+
+                        <span>
+                            Total Records
+                        </span>
+
+                        <strong>
+                            {{ total_records }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- MALE -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon male-icon">
+                        ♂
+                    </div>
+
+                    <div class="stat-content">
+
+                        <span>
+                            Male
+                        </span>
+
+                        <strong>
+                            {{ male_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FEMALE -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon female-icon">
+                        ♀
+                    </div>
+
+                    <div class="stat-content">
+
+                        <span>
+                            Female
+                        </span>
+
+                        <strong>
+                            {{ female_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- OTHER -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon other-icon">
+                        ◈
+                    </div>
+
+                    <div class="stat-content">
+
+                        <span>
+                            Other
+                        </span>
+
+                        <strong>
+                            {{ other_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             QUICK ACTIONS
+        ====================================================== -->
+
+        <section class="dashboard-section">
+
+
+            <div class="dashboard-section-heading">
+
+                <div>
+
+                    <h2>
+                        Quick Actions
+                    </h2>
+
+                    <p>
+                        Frequently used census operations.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="quick-actions">
+
+
+                <!-- ADD CENSUS RECORD -->
+
+                <a
+                    href="{{ url_for('add_record') }}"
+                    class="quick-action-card"
+                >
+
+                    <div class="quick-action-icon">
+                        ＋
+                    </div>
+
+                    <div class="quick-action-content">
+
+                        <strong>
+                            Add Census Record
+                        </strong>
+
+                        <span>
+                            Create a new citizen record
+                        </span>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+
+                <!-- VIEW RECORDS -->
+
+                <a
+                    href="{{ url_for('records') }}"
+                    class="quick-action-card"
+                >
+
+                    <div class="quick-action-icon">
+                        ▤
+                    </div>
+
+                    <div class="quick-action-content">
+
+                        <strong>
+                            View Census Records
+                        </strong>
+
+                        <span>
+                            View all saved records
+                        </span>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             BOTTOM CONTENT
+        ====================================================== -->
+
+        <div class="dashboard-bottom-grid">
+
+
+            <!-- RECENT RECORDS -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <h2>
+                            Recent Records
+                        </h2>
+
+                        <p>
+                            Latest census entries
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('records') }}"
+                    >
+                        View All
+                    </a>
+
+                </div>
+
+
+
+                {% if recent_records %}
+
+
+                    <div class="recent-record-list">
+
+
+                        {% for record in recent_records %}
+
+
+                            <div class="recent-record-item">
+
+
+                                <div class="recent-avatar">
+                                    {{ record["full_name"][0]|upper }}
+                                </div>
+
+
+                                <div class="recent-record-info">
+
+                                    <strong>
+                                        {{ record["full_name"] }}
+                                    </strong>
+
+                                    <span>
+                                        {{ record["age"] }} years
+                                        ·
+                                        {{ record["gender"] }}
+                                        ·
+                                        {{ record["city"] }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="recent-record-arrow">
+                                    →
+                                </div>
+
+
+                            </div>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <div class="empty-dashboard">
+
+                        <div>
+                            📋
+                        </div>
+
+                        <h3>
+                            No records yet
+                        </h3>
+
+                        <p>
+                            Add your first census record to
+                            see it here.
+                        </p>
+
+                        <a
+                            href="{{ url_for('add_record') }}"
+                        >
+                            Add Record
+                        </a>
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </section>
+
+
+
+            <!-- ACCOUNT SUMMARY -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <h2>
+                            Account Summary
+                        </h2>
+
+                        <p>
+                            Your account information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="account-summary">
+
+
+                    <div class="account-row">
+
+                        <span>
+                            Name
+                        </span>
+
+                        <strong>
+                            {{ user_name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-row">
+
+                        <span>
+                            Email
+                        </span>
+
+                        <strong>
+                            {{ user_email }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-row">
+
+                        <span>
+                            Census Records
+                        </span>
+
+                        <strong>
+                            {{ total_records }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-row">
+
+                        <span>
+                            Account Status
+                        </span>
+
+                        <strong class="status-active">
+                            ● Active
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <a
+                    href="{{ url_for('add_record') }}"
+                    class="panel-primary-button"
+                >
+                    + Add New Record
+                </a>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                © 2026 Smart Census System
+            </span>
+
+            <span>
+                Secure Census Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Census System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <div class="logo">
+            <span class="logo-icon">SC</span>
+            <span>Smart Census</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+
+        <div class="nav-actions">
+<a href="{{ url_for('login') }}" class="login-link">
+    Login
+</a>
+            <a href="{{ url_for('register') }}" class="nav-button">
+                Get Started
+            </a>
+        </div>
+
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                ● Smart & Secure Census Management
+            </div>
+
+            <h1>
+                Building a Smarter
+                <span>Digital Census</span>
+                System
+            </h1>
+
+            <p>
+                A modern platform designed to manage census information
+                efficiently, securely, and transparently using
+                Python, Flask, SQLite, and Blockchain technology.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="{{ url_for('register') }}" class="primary-button">
+                    Get Started →
+                </a>
+
+                <a href="#about" class="secondary-button">
+                    Learn More
+                </a>
+
+            </div>
+
+            <div class="hero-info">
+
+                <div class="info-item">
+                    <strong>Secure</strong>
+                    <span>Data Management</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Reliable</strong>
+                    <span>Digital Records</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Modern</strong>
+                    <span>Technology</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Dashboard Visual -->
+        <div class="hero-visual">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-header">
+
+                    <div>
+                        <span class="small-label">
+                            SYSTEM OVERVIEW
+                        </span>
+
+                        <h3>Census Dashboard</h3>
+                    </div>
+
+                    <div class="status-dot">
+                        ● Live
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-statistics">
+
+                    <div class="stat-card">
+                        <span>Total Records</span>
+                        <strong>1,248</strong>
+                        <small>+12.5% this month</small>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>Verified Data</span>
+                        <strong>98.6%</strong>
+                        <small>Data accuracy</small>
+                    </div>
+
+                </div>
+
+
+                <div class="chart-area">
+
+                    <div class="chart-title">
+                        <span>Population Overview</span>
+                        <span>2026</span>
+                    </div>
+
+                    <div class="chart-bars">
+
+                        <div class="bar" style="height: 45%;"></div>
+                        <div class="bar" style="height: 65%;"></div>
+                        <div class="bar" style="height: 50%;"></div>
+                        <div class="bar" style="height: 80%;"></div>
+                        <div class="bar" style="height: 60%;"></div>
+                        <div class="bar" style="height: 90%;"></div>
+                        <div class="bar" style="height: 75%;"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-footer">
+
+                    <div class="footer-icon">✓</div>
+
+                    <div>
+                        <strong>System Protected</strong>
+                        <span>Secure data processing enabled</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+
+        <div class="section-heading">
+
+            <span class="section-label">CORE FEATURES</span>
+
+            <h2>
+                Everything You Need
+                <span>In One System</span>
+            </h2>
+
+            <p>
+                Manage census information through a simple,
+                secure, and user-friendly platform.
+            </p>
+
+        </div>
+
+
+        <div class="features-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">👥</div>
+
+                <h3>Citizen Management</h3>
+
+                <p>
+                    Add, update, view, and manage citizen
+                    information efficiently.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">🔐</div>
+
+                <h3>Secure Records</h3>
+
+                <p>
+                    Protect important records through
+                    authentication and secure data handling.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">⛓️</div>
+
+                <h3>Blockchain Integration</h3>
+
+                <p>
+                    Support transparent and tamper-resistant
+                    record verification.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">📊</div>
+
+                <h3>Smart Dashboard</h3>
+
+                <p>
+                    View important census statistics
+                    through a clean dashboard.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+
+        <div class="about-content">
+
+            <span class="section-label">ABOUT THE PROJECT</span>
+
+            <h2>
+                Technology That Makes
+                Census Management Smarter
+            </h2>
+
+            <p>
+                Smart Census System is a web-based application
+                developed to simplify census data collection,
+                management, and verification.
+            </p>
+
+            <p>
+                The system uses Flask for backend development,
+                SQLite for database management, and blockchain
+                concepts for improving transparency and trust.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+
+        <h2>Smart Data. Better Management.</h2>
+
+        <p>
+            A step towards modern digital census management.
+        </p>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <p>
+            © 2026 Smart Census System. All rights reserved.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

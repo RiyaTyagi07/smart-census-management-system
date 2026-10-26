@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Smart Census</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="auth-shell">
+
+        <div class="auth-brand-panel">
+            <div class="auth-brand-content">
+
+                <div class="auth-brand-icon">SC</div>
+
+                <h2>Smart<span>Census</span></h2>
+
+                <p>
+                    Building smarter communities<br>
+                    through reliable data.
+                </p>
+
+            </div>
+        </div>
+
+
+        <div class="auth-form-panel">
+
+            <div class="auth-card">
+
+                <div class="auth-heading">
+                    <span>WELCOME BACK</span>
+
+                    <h1>Sign in to your account</h1>
+
+                    <p>
+                        Enter your details to continue.
+                    </p>
+                </div>
+
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="auth-alert {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+
+                <form method="POST" action="{{ url_for('login') }}">
+
+                    <div class="auth-field">
+                        <label for="email">Email Address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="auth-field">
+                        <label for="password">Password</label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+                    <div style="text-align: right; margin-top: 8px; margin-bottom: 18px;">
+    <a
+        href="{{ url_for('forgot_password') }}"
+        style="
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        "
+    >
+        Forgot Password?
+    </a>
+</div>
+
+
+                    <button type="submit" class="auth-submit">
+                        Sign In
+                    </button>
+
+                </form>
+
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="{{ url_for('register') }}">
+                        Create one
+                    </a>
+                </p>
+
+                <a href="{{ url_for('home') }}" class="auth-home-link">
+                    ← Back to home
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
