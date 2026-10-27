@@ -1,3 +1,4 @@
+import os
 from flask import (
     Flask,
     render_template,
@@ -74,7 +75,7 @@ app = Flask(
     static_folder=str(STATIC_DIR)
 )
 
-app.secret_key = "smart-census-system-development-key"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-only-change-this")
 
 
 # ============================================================
