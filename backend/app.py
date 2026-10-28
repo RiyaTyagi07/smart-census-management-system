@@ -684,6 +684,28 @@ def dashboard():
         blockchain_info=blockchain_info
     )
 
+@app.route("/profile")
+def profile():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    try:
+        user = connection.execute(
+            "SELECT id, name, email, created_at FROM users WHERE id = ?",
+            (session["user_id"],)
+        ).fetchone()
+    finally:
+        connection.close()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    return render_template("profile.html", user=user)
+
+
 
 # ============================================================
 # ADD CENSUS RECORD
