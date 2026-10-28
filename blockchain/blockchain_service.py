@@ -8,6 +8,7 @@ from web3 import Web3
 from web3.providers.eth_tester import EthereumTesterProvider
 
 
+
 # ============================================================
 # PATH CONFIGURATION
 # ============================================================
@@ -24,7 +25,6 @@ DATABASE_FILE = PROJECT_DIR / "database" / "census.db"
 
 # Persistent blockchain audit file
 PERSISTENCE_FILE = BASE_DIR / "persistent_blockchain_ledger.json"
-
 
 # ============================================================
 # LOAD CONTRACT FILES

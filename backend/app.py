@@ -19,6 +19,7 @@ from pathlib import Path
 from werkzeug.utils import secure_filename
 
 
+
 # ============================================================
 # PATH CONFIGURATION
 # ============================================================
@@ -26,11 +27,14 @@ from werkzeug.utils import secure_filename
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASE_DIR = BASE_DIR / "database"
+DATABASE_DIR.mkdir(parents=True, exist_ok=True)
+
 DATABASE_PATH = DATABASE_DIR / "census.db"
 
 FRONTEND_DIR = BASE_DIR / "frontend"
 TEMPLATE_DIR = FRONTEND_DIR / "templates"
 STATIC_DIR = FRONTEND_DIR / "static"
+
 
 # ============================================================
 # DOCUMENT UPLOAD CONFIGURATION
