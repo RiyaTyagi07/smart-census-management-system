@@ -1,4 +1,3 @@
-import os
 from flask import (
     Flask,
     render_template,
@@ -11,6 +10,7 @@ from flask import (
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import os
 import sqlite3
 import sys
 import secrets
@@ -99,101 +99,90 @@ def get_db_connection():
 # ============================================================
 
 def initialize_database():
+    """Create the database directory and all required tables safely.
 
-    DATABASE_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
+    CREATE TABLE IF NOT EXISTS leaves any existing users table and its
+    data untouched. It creates the table only when the database is new.
+    """
+    DATABASE_DIR.mkdir(parents=True, exist_ok=True)
     connection = get_db_connection()
 
-    cursor = connection.cursor()
+    try:
+        cursor = connection.cursor()
 
-    # --------------------------------------------------------
-    # IMPORTANT:
-    # Existing users table uses `name`, not `full_name`.
-    #
-    # Therefore we DO NOT recreate or modify users table.
-    # --------------------------------------------------------
+        # Create users first because the other tables reference users(id).
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS census_records (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            full_name TEXT NOT NULL,
-            age INTEGER NOT NULL,
-            gender TEXT NOT NULL,
-            date_of_birth TEXT NOT NULL,
-            mobile_number TEXT NOT NULL,
-            address TEXT NOT NULL,
-            city TEXT NOT NULL,
-            occupation TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS census_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                full_name TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                gender TEXT NOT NULL,
+                date_of_birth TEXT NOT NULL,
+                mobile_number TEXT NOT NULL,
+                address TEXT NOT NULL,
+                city TEXT NOT NULL,
+                occupation TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
 
-            FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE CASCADE
-        )
-    """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS deleted_record_audit (
+                record_id INTEGER PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
 
-    # --------------------------------------------------------
-    # DELETED RECORD AUDIT TABLE
-    #
-    # This table keeps ownership information even after the
-    # original census record is deleted from census_records.
-    #
-    # This allows blockchain history to remain accessible.
-    # --------------------------------------------------------
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS password_reset_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS deleted_record_audit (
-            record_id INTEGER PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS census_documents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                record_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                original_name TEXT NOT NULL,
+                stored_name TEXT NOT NULL UNIQUE,
+                file_path TEXT NOT NULL,
+                mime_type TEXT,
+                file_size INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (record_id) REFERENCES census_records(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
 
-            FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE CASCADE
-        )
-    """)
+        connection.commit()
+        app.logger.info("Database initialization completed successfully.")
 
-    # --------------------------------------------------------
-    # PASSWORD RESET TABLE
-    # --------------------------------------------------------
+    except Exception:
+        connection.rollback()
+        app.logger.exception("Database initialization failed.")
+        raise
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS password_reset_sessions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            token TEXT NOT NULL UNIQUE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        )
-    """)
-
-    # --------------------------------------------------------
-    # CENSUS DOCUMENTS TABLE
-    # --------------------------------------------------------
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS census_documents (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            record_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            original_name TEXT NOT NULL,
-            stored_name TEXT NOT NULL UNIQUE,
-            file_path TEXT NOT NULL,
-            mime_type TEXT,
-            file_size INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (record_id) REFERENCES census_records(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        )
-    """)
-
-    connection.commit()
-
-    connection.close()
+    finally:
+        connection.close()
 
 
 # ============================================================
@@ -1614,102 +1603,6 @@ def blockchain_history(record_id):
     )
 
 
-
-# ============================================================
-# PROFILE
-# ============================================================
-
-@app.route("/profile")
-def profile():
-
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    connection = get_db_connection()
-
-    user = connection.execute(
-        """
-        SELECT id, name, email, created_at
-        FROM users
-        WHERE id = ?
-        """,
-        (session["user_id"],)
-    ).fetchone()
-
-    connection.close()
-
-    if not user:
-
-        session.clear()
-
-        flash(
-            "User profile could not be found.",
-            "error"
-        )
-
-        return redirect(
-            url_for("login")
-        )
-
-    return render_template(
-        "account.html",
-        page="profile",
-        user=user
-    )
-
-
-# ============================================================
-# SETTINGS
-# ============================================================
-
-@app.route("/settings")
-def settings():
-
-    if "user_id" not in session:
-        return redirect(
-            url_for("login")
-        )
-
-    return render_template(
-        "account.html",
-        page="settings",
-        user_name=session.get(
-            "user_name",
-            "User"
-        ),
-        user_email=session.get(
-            "user_email",
-            ""
-        )
-    )
-
-
-# ============================================================
-# HELP / SUPPORT
-# ============================================================
-
-@app.route("/help")
-def help_page():
-
-    if "user_id" not in session:
-        return redirect(
-            url_for("login")
-        )
-
-    return render_template(
-        "account.html",
-        page="help",
-        user_name=session.get(
-            "user_name",
-            "User"
-        ),
-        user_email=session.get(
-            "user_email",
-            ""
-        )
-    )
-
-
 # ============================================================
 # LOGOUT
 # ============================================================
@@ -1728,9 +1621,11 @@ def logout():
 # START APPLICATION
 # ============================================================
 
-if __name__ == "__main__":
+# Gunicorn imports this module instead of executing it as __main__.
+# Initialize the database during import so production deployments have tables.
+initialize_database()
 
-    initialize_database()
+if __name__ == "__main__":
 
     print("\n========================================")
     print("       SMART CENSUS SYSTEM")
@@ -1742,4 +1637,3 @@ if __name__ == "__main__":
     app.run(
         debug=True
     )
-    
