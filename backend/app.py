@@ -98,29 +98,47 @@ def get_db_connection():
 # DATABASE INITIALIZATION
 # ============================================================
 
-def initialize_database():
-    """Create the database directory and all required tables safely.
 
-    CREATE TABLE IF NOT EXISTS leaves any existing users table and its
-    data untouched. It creates the table only when the database is new.
-    """
+def initialize_database():
+    """Initialize all required SQLite tables safely."""
     DATABASE_DIR.mkdir(parents=True, exist_ok=True)
     connection = get_db_connection()
 
     try:
         cursor = connection.cursor()
 
-        # Create users first because the other tables reference users(id).
+        # Users table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
+                name TEXT,
                 email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
+                password TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
 
+        # Check existing users table columns
+        columns = {
+            row["name"]
+            for row in cursor.execute(
+                "PRAGMA table_info(users)"
+            ).fetchall()
+        }
+
+        if "name" not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN name TEXT"
+            )
+            columns.add("name")
+
+        if "password" not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN password TEXT"
+            )
+            columns.add("password")
+
+        # Census records
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS census_records (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -134,29 +152,35 @@ def initialize_database():
                 city TEXT NOT NULL,
                 occupation TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id) ON DELETE CASCADE
             )
         """)
 
+        # Deleted-record audit
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS deleted_record_audit (
                 record_id INTEGER PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id) ON DELETE CASCADE
             )
         """)
 
+        # Password reset sessions
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS password_reset_sessions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 token TEXT NOT NULL UNIQUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id) ON DELETE CASCADE
             )
         """)
 
+        # Census documents
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS census_documents (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -168,21 +192,28 @@ def initialize_database():
                 mime_type TEXT,
                 file_size INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (record_id) REFERENCES census_records(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (record_id)
+                    REFERENCES census_records(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id) ON DELETE CASCADE
             )
         """)
 
         connection.commit()
-        app.logger.info("Database initialization completed successfully.")
+        app.logger.info(
+            "Database initialization completed successfully."
+        )
 
     except Exception:
         connection.rollback()
-        app.logger.exception("Database initialization failed.")
+        app.logger.exception(
+            "Database initialization failed."
+        )
         raise
 
     finally:
         connection.close()
+
 
 
 # ============================================================
